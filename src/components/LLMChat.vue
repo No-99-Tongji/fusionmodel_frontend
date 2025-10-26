@@ -93,7 +93,12 @@ const error = ref('')
 const messagesContainer = ref(null)
 const inputField = ref(null)
 
-const API_URL = 'http://localhost:8081/api/chat/best-response'
+// 根据环境自动选择API地址
+// 开发环境：直接访问后端 localhost:8081
+// 生产环境：通过nginx代理访问 /api/
+const API_URL = import.meta.env.PROD
+  ? '/api/chat/best-response'
+  : 'http://localhost:8081/api/chat/best-response'
 
 const formatMessage = (content) => {
   if (!content) return ''
