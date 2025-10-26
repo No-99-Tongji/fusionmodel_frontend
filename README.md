@@ -15,6 +15,19 @@ This template should help get you started developing with Vue 3 in Vite.
   - [Vue.js devtools](https://addons.mozilla.org/en-US/firefox/addon/vue-js-devtools/)
   - [Turn on Custom Object Formatter in Firefox DevTools](https://fxdx.dev/firefox-devtools-custom-object-formatters/)
 
+## Dependencies
+
+### Production Dependencies
+- vue: 3.5.22
+
+### Development Dependencies
+- @vitejs/plugin-vue: 6.0.1
+- vite: 7.1.11
+- vite-plugin-vue-devtools: 8.0.3
+
+### Node Version Requirements
+- Node.js: 20.19.0 or >=22.12.0
+
 ## Customize configuration
 
 See [Vite Configuration Reference](https://vite.dev/config/).
