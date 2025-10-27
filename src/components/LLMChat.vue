@@ -84,7 +84,20 @@
 </template>
 
 <script setup>
-import { ref, nextTick } from 'vue'
+import { ref, nextTick, watch, defineProps, defineEmits } from 'vue'
+
+const props = defineProps({
+  sessionMessages: {
+    type: Array,
+    default: () => []
+  },
+  sessionId: {
+    type: String,
+    default: null
+  }
+})
+
+const emit = defineEmits(['update-messages', 'first-message'])
 
 const messages = ref([])
 const userInput = ref('')
@@ -123,6 +136,12 @@ const scrollToBottom = () => {
   })
 }
 
+// Watch for session changes and update messages
+watch(() => props.sessionMessages, (newMessages) => {
+  messages.value = [...newMessages]
+  scrollToBottom()
+}, { immediate: true, deep: true })
+
 const autoResize = () => {
   nextTick(() => {
     if (inputField.value) {
@@ -138,10 +157,21 @@ const sendMessage = async () => {
 
   const question = userInput.value.trim()
 
-  messages.value.push({
+  // Check if this is the first message in the session
+  const isFirstMessage = messages.value.length === 0
+
+  const userMessage = {
     role: 'user',
     content: question
-  })
+  }
+
+  messages.value.push(userMessage)
+  emit('update-messages', [...messages.value])
+
+  // Emit first message for title generation
+  if (isFirstMessage) {
+    emit('first-message', question)
+  }
 
   userInput.value = ''
   if (inputField.value) {
@@ -175,12 +205,15 @@ const sendMessage = async () => {
 
     const data = await response.json()
 
-    messages.value.push({
+    const assistantMessage = {
       role: 'assistant',
       content: data.content,
       model: data.model,
       score: data.score
-    })
+    }
+
+    messages.value.push(assistantMessage)
+    emit('update-messages', [...messages.value])
 
     scrollToBottom()
   } catch (err) {
@@ -205,7 +238,7 @@ const sendMessage = async () => {
   display: flex;
   flex-direction: column;
   height: 100vh;
-  width: 100%;
+  flex: 1;
   background: #0d0d0d;
   color: #ececec;
   overflow: hidden;
